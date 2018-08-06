@@ -1,6 +1,7 @@
-FROM php:5.6-fpm
-RUN apt-get update -y && apt-get install -y libpng-dev libsqlite3-dev libjpeg62-turbo-dev libfreetype6-dev
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
+FROM php:7.1.17-fpm
+
+ENV MEMCACHED_VERSION 3.0.4 
+RUN apt-get update -y && apt-get install -y libpng-dev libsqlite3-dev
 RUN docker-php-ext-install gd pdo pdo_sqlite exif pdo_mysql zip
 
 
@@ -26,18 +27,37 @@ RUN php /tmp/composer-setup.php
 RUN mv composer.phar /usr/local/bin/composer
 RUN rm /tmp/composer-setup.php
 
+
+
+
+
 RUN apt-get install -y libmagickwand-dev
 RUN pecl install imagick-beta
 RUN echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini
 
 
-#RUN pecl install xdebug
-#RUN docker-php-ext-enable xdebug
-#RUN echo  "\
-#xdebug.remote_port=9000 \n\
-#xdebug.remote_enable=on \n\ 
-#xdebug.remote_log=/var/log/xdebug.log " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-#RUN touch /var/log/xdebug.log
+
+
+RUN apt-get install -y libz-dev libmemcached-dev
+RUN pecl install memcached
+RUN echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini
+RUN pecl install igbinary 
+RUN docker-php-ext-enable igbinary
+
+#ENV LIBMEMCACHED_VERSION 1.0.16
+#ENV MEMCACHED_VERSION 3.0.4
+#RUN apt-get install -y \
+#libmemcached-dev=$LIBMEMCACHED_VERSION \
+# && pecl download memcached-$MEMCACHED_VERSION \
+#  && tar xzvf memcached-$MEMCACHED_VERSION.tgz \
+#   && cd memcached-$MEMCACHED_VERSION \
+#    && phpize \ 
+#    && ./configure --enable-memcached-igbinary --enable-memcached-json \
+#     && make \ && make install \
+#      && docker-php-ext-enable memcached \
+
+
+
 
 RUN apt-get install -y ssmtp
 RUN echo "[mail function]\nsendmail_path = /usr/sbin/ssmtp -t" > /usr/local/etc/php/conf.d/sendmail.ini
