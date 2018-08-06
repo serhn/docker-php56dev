@@ -31,13 +31,13 @@ RUN pecl install imagick-beta
 RUN echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini
 
 
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
-RUN echo  "\
-xdebug.remote_port=9000 \n\
-xdebug.remote_enable=on \n\ 
-xdebug.remote_log=/var/log/xdebug.log " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN touch /var/log/xdebug.log
+#RUN pecl install xdebug
+#RUN docker-php-ext-enable xdebug
+#RUN echo  "\
+#xdebug.remote_port=9000 \n\
+#xdebug.remote_enable=on \n\ 
+#xdebug.remote_log=/var/log/xdebug.log " >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#RUN touch /var/log/xdebug.log
 
 RUN apt-get install -y ssmtp
 RUN echo "[mail function]\nsendmail_path = /usr/sbin/ssmtp -t" > /usr/local/etc/php/conf.d/sendmail.ini
